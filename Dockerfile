@@ -114,32 +114,10 @@ RUN chmod -R 700 /usr/local/bin/
 
 	# PECL
 	RUN docker-php-pecl-install \
-		ssh2-1.0 \
-		redis-3.0 \
-		apcu-5.1.5
-
-	# Memcached
-	# TODO PECL not available for PHP 7 yet, we must compile it.
-	RUN apt-get update \
-		&& apt-get install -y \
-		libmemcached-dev \
-		libmemcached11
-
-	RUN cd /tmp \
-		&& git clone -b php7 https://github.com/php-memcached-dev/php-memcached \
-		&& cd php-memcached \
-		&& phpize \
-		&& ./configure \
-		&& make \
-		&& cp /tmp/php-memcached/modules/memcached.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/memcached.so \
-		&& docker-php-ext-enable memcached
-
-	# Install XDebug, but not enable by default. Enable using:
-	# * php -d$XDEBUG_EXT vendor/bin/phpunit
-	# * php_xdebug vendor/bin/phpunit
-	RUN pecl install xdebug-2.4.0
-	ENV XDEBUG_EXT zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/xdebug.so
-	RUN alias php_xdebug="php -d$XDEBUG_EXT vendor/bin/phpunit"
+		xdebug \
+		ssh2-0.12 \
+		redis \
+		apcu
 
 	# Install composer and put binary into $PATH
 	RUN curl -sS https://getcomposer.org/installer | php \
